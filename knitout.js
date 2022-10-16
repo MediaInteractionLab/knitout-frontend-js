@@ -310,6 +310,14 @@ Writer.prototype.stitchNumber = function (stitchNumber) {
 	this._operations.push('x-stitch-number ' + stitchNumber.toString());
 };
 
+Writer.prototype.stitchNumber2nd = function (stitchNumber) {
+	if (!(Number.isInteger(stitchNumber) && stitchNumber >= 0)) {
+		throw new Error("Stitch numbers (2nd) are non-negative integer values.")
+	}
+
+	this._operations.push('x_stitch-number-2nd ' + stitchNumber.toString());
+}
+
 Writer.prototype.fabricPresser = function (presserMode) {
 	machineSupport('presser mode', 'SWG');
 	if(presserMode === 'auto'){
@@ -348,6 +356,32 @@ Writer.prototype.speedNumber = function (value) {
 	if (!(Number.isInteger(value) && value >= 0)) {
 		console.warn(`Ignoring speed number extension, since provided value: ${value} is not a non-negative integer.`);
 	} else this._operations.push(`x-speed-number ${value}`);
+};
+
+Writer.prototype.knit2nd = function(...args) {
+	machineSupport('2nd stitch', 'SWG');
+	let dir = shiftDirection(args);
+	let bn = shiftBedNeedle(args);
+	let cs = shiftCarrierSet(args, this._carriers);
+
+	if (cs.length > 0) {
+		this.needles[bn.bed + bn.needle.toString()] = true;
+	} else {
+		delete this.needles[bn.bed + bn.needle.toString()];
+	}
+	
+	this._operations.push('x-knit-2nd ' + dir + ' ' + bn.bed + bn.needle.toString() + ' ' + cs.join(' '));
+};
+
+Writer.prototype.tuck2nd  = function(...args) {
+	machineSupport('2nd stitch', 'SWG');
+	let dir = shiftDirection(args);
+	let bn = shiftBedNeedle(args);
+	let cs = shiftCarrierSet(args, this._carriers);
+
+	this.needles[bn.bed + bn.needle.toString()] = true;
+	
+	this._operations.push('x-tuck-2nd ' + dir + ' ' + bn.bed + bn.needle.toString() + ' ' + cs.join(' '));
 };
 
 Writer.prototype.rollerAdvance = function (value) {
