@@ -315,7 +315,7 @@ Writer.prototype.stitchNumber2nd = function (stitchNumber) {
 		throw new Error("Stitch numbers (2nd) are non-negative integer values.")
 	}
 
-	this._operations.push('x_stitch-number-2nd ' + stitchNumber.toString());
+	this._operations.push('x-stitch-number-2nd ' + stitchNumber.toString());
 }
 
 Writer.prototype.fabricPresser = function (presserMode) {
